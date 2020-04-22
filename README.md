@@ -3,6 +3,8 @@
 ### How to use
 The code was written with Python 3. You can use git clone to create a working copy of the repository, but if you don't have git installed, you can also download the repository as a zip-file, extract it and run the py-files that way. Run first `LWrad.py` and secondly `climate_files.py`.
 
+The Delphin 6 outdoor climatic files need to be first converted to a c6b file using the CCMEditor, available at: https://www.bauklimatik-dresden.de/downloads.php
+
 ### Background and description of the files
 This repository contains data and code for creating input files for building physical simulation programs. The building physics research group at Tampere University of Technology (currently Tampere University) coordinated the FRAME-project during 2009-2012, in which two moisture test years were selected for current climate (1980-2009), 2050-climate (2035-2064) and 2100-climate (2085-2114), summing up to six years in total. These years were Jokioinen 2004, 2050 and 2100 for structures that are mainly influenced by outdoor air humidity and Vantaa 2007, 2050 and 2100 for structures where the main moisture source is driving rain. The 30-year climatic data for the current and future climates was provided by the Finnish Meteorological Institute, which had parallel projects called REFI-A for building energy consumption and indoor air conditions test years and REFI-B for building physical test years. The folder `input` contains hourly data on the Finnish building physical test years for current and future climate.
 
