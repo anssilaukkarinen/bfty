@@ -1,0 +1,3 @@
+# Exclude output folders, trailing slash (/) means folders and everyting in them
+LWrad/
+output/
