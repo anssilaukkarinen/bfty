@@ -77,31 +77,61 @@ test_year_names = ['Jokioinen 2004', 'Jokioinen 2030', \
                    'Vantaa 2050', 'Vantaa 2100']
 
 
-WUFI_wac_headers_jok = ['WUFI®_WAC_02', \
-                         "10	Line Offset to 'Number of Data Columns'", \
-                         '', \
-                         'A Finnish Building physical test year', \
-                         '23.50	Longitude [°]; East is positive', \
-                         "60.81	Latitude [°]; North is positive", \
-                         '104	HeightAMSL [m]', \
-                         '2.0	Time Zone [h from UTC]; East is positive', \
-                         '1	Time Step [h]', \
-                         '8760	Number of DataLines', 
-                         '9	Number of DataColumns', \
-                         'TA HREL ISDH ISD ILAH RN WD WS PMSL']
+WUFI_wac_headers_outdoor_jok = ['WUFI®_WAC_02', \
+                             "10	Line Offset to 'Number of Data Columns'", \
+                             '', \
+                             'A Finnish Building physical test year', \
+                             '23.50	Longitude [°]; East is positive', \
+                             "60.81	Latitude [°]; North is positive", \
+                             '104	HeightAMSL [m]', \
+                             '2.0	Time Zone [h from UTC]; East is positive', \
+                             '1	Time Step [h]', \
+                             '8760	Number of DataLines', 
+                             '9	Number of DataColumns', \
+                             'TA HREL ISDH ISD ILAH RN WD WS PMSL']
 
-WUFI_wac_headers_van = ['WUFI®_WAC_02', \
-                         "10	Line Offset to 'Number of Data Columns'", \
-                         '', \
-                         'A Finnish Building physical test year', \
-                         '24.96	Longitude [°]; East is positive', \
-                         "60.33	Latitude [°]; North is positive", \
-                         '51	HeightAMSL [m]', \
-                         '2.0	Time Zone [h from UTC]; East is positive', \
-                         '1	Time Step [h]', \
-                         '8760	Number of DataLines', 
-                         '9	Number of DataColumns', \
-                         'TA HREL ISDH ISD ILAH RN WD WS PMSL']
+WUFI_wac_headers_outdoor_van = ['WUFI®_WAC_02', \
+                             "10	Line Offset to 'Number of Data Columns'", \
+                             '', \
+                             'A Finnish Building physical test year', \
+                             '24.96	Longitude [°]; East is positive', \
+                             "60.33	Latitude [°]; North is positive", \
+                             '51	HeightAMSL [m]', \
+                             '2.0	Time Zone [h from UTC]; East is positive', \
+                             '1	Time Step [h]', \
+                             '8760	Number of DataLines', 
+                             '9	Number of DataColumns', \
+                             'TA HREL ISDH ISD ILAH RN WD WS PMSL']
+
+
+
+
+WUFI_wac_headers_indoor_jok = ['WUFI®_WAC_02', \
+                             "10	Line Offset to 'Number of Data Columns'", \
+                             '', \
+                             'Indoor air conditions for a Finnish Building physical test year', \
+                             '23.50	Longitude [°]; East is positive', \
+                             "60.81	Latitude [°]; North is positive", \
+                             '104	HeightAMSL [m]', \
+                             '2.0	Time Zone [h from UTC]; East is positive', \
+                             '1	Time Step [h]', \
+                             '8760	Number of DataLines', 
+                             '3	Number of DataColumns', \
+                             'TA HREL PMSL']
+
+
+WUFI_wac_headers_indoor_van = ['WUFI®_WAC_02', \
+                             "10	Line Offset to 'Number of Data Columns'", \
+                             '', \
+                             'Indoor air conditions for a Finnish Building physical test year', \
+                             '24.96	Longitude [°]; East is positive', \
+                             "60.33	Latitude [°]; North is positive", \
+                             '51	HeightAMSL [m]', \
+                             '2.0	Time Zone [h from UTC]; East is positive', \
+                             '1	Time Step [h]', \
+                             '8760	Number of DataLines', 
+                             '3	Number of DataColumns', \
+                             'TA HREL PMSL']
 
 
 window_width = 24
@@ -341,8 +371,7 @@ for idx_year, year in enumerate(data.keys()):
                 f.write(linetowrite + '\n')
                 
                 
-    ## Export to WUFI files, RHe over water
-    
+    ## Export outdoor data to WUFI files, RHe over water
     x1 = data[year].loc[1:,'Te']
     x2 = data[year].loc[0,'Te']
     TA = np.append(x1, x2)
@@ -362,27 +391,27 @@ for idx_year, year in enumerate(data.keys()):
     PMSL = data[year].loc[:,'Pair'] / 100.0    
     
     
-    if not os.path.exists('./output/WUFI_over_water'):
-        os.makedirs('./output/WUFI_over_water')
+    if not os.path.exists('./output/WUFI/outdoor_over_water'):
+        os.makedirs('./output/WUFI/outdoor_over_water')
     
-    fname = './output/WUFI_over_water/'+year+'.wac'
+    fname = './output/WUFI/outdoor_over_water/' + year + '_RHe_water.wac'
     
     with open(fname, mode='w', encoding='ANSI') as f:
         if 'jok' in year:
-            f.writelines(WUFI_wac_headers_jok[0] + '\n')
-            f.writelines(WUFI_wac_headers_jok[1] + '\n')
-            f.writelines(WUFI_wac_headers_jok[2] + test_year_names[idx_year] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[0] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[1] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[2] + test_year_names[idx_year] + '\n')
             for idx_line in range(3,11):
-                f.writelines(WUFI_wac_headers_jok[idx_line] + '\n')
-            f.writelines('\t'.join(WUFI_wac_headers_jok[-1].split(' ')) + '\n')
+                f.writelines(WUFI_wac_headers_outdoor_jok[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_outdoor_jok[-1].split(' ')) + '\n')
             
         elif 'van' in year:
-            f.writelines(WUFI_wac_headers_van[0] + '\n')
-            f.writelines(WUFI_wac_headers_van[1] + '\n')
-            f.writelines(WUFI_wac_headers_van[2] + test_year_names[idx_year] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[0] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[1] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[2] + test_year_names[idx_year] + '\n')
             for idx_line in range(3,11):
-                f.writelines(WUFI_wac_headers_van[idx_line] + '\n')
-            f.writelines('\t'.join(WUFI_wac_headers_van[-1].split(' ')) + '\n')
+                f.writelines(WUFI_wac_headers_outdoor_van[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_outdoor_van[-1].split(' ')) + '\n')
 
         for t in range(8760):
             txt = '{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}'
@@ -392,8 +421,7 @@ for idx_year, year in enumerate(data.keys()):
             
             
 
-    ## Export to WUFI files, RHe over ice
-    
+    ## Export outdoor data to WUFI files, RHe over ice
     x1 = data[year].loc[1:,'Te']
     x2 = data[year].loc[0,'Te']
     TA = np.append(x1, x2)
@@ -413,30 +441,105 @@ for idx_year, year in enumerate(data.keys()):
     PMSL = data[year].loc[:,'Pair'] / 100.0    
     
     
-    if not os.path.exists('./output/WUFI_over_ice'):
-        os.makedirs('./output/WUFI_over_ice')
+    if not os.path.exists('./output/WUFI/outdoor_over_ice'):
+        os.makedirs('./output/WUFI/outdoor_over_ice')
     
-    fname = './output/WUFI_over_ice/'+year+'.wac'
+    fname = './output/WUFI/outdoor_over_ice/' + year + '_RHe_ice.wac'
     
     with open(fname, mode='w', encoding='ANSI') as f:
         if 'jok' in year:
-            f.writelines(WUFI_wac_headers_jok[0] + '\n')
-            f.writelines(WUFI_wac_headers_jok[1] + '\n')
-            f.writelines(WUFI_wac_headers_jok[2] + test_year_names[idx_year] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[0] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[1] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_jok[2] + test_year_names[idx_year] + '\n')
             for idx_line in range(3,11):
-                f.writelines(WUFI_wac_headers_jok[idx_line] + '\n')
-            f.writelines('\t'.join(WUFI_wac_headers_jok[-1].split(' ')) + '\n')
+                f.writelines(WUFI_wac_headers_outdoor_jok[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_outdoor_jok[-1].split(' ')) + '\n')
             
         elif 'van' in year:
-            f.writelines(WUFI_wac_headers_van[0] + '\n')
-            f.writelines(WUFI_wac_headers_van[1] + '\n')
-            f.writelines(WUFI_wac_headers_van[2] + test_year_names[idx_year] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[0] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[1] + '\n')
+            f.writelines(WUFI_wac_headers_outdoor_van[2] + test_year_names[idx_year] + '\n')
             for idx_line in range(3,11):
-                f.writelines(WUFI_wac_headers_van[idx_line] + '\n')
-            f.writelines('\t'.join(WUFI_wac_headers_van[-1].split(' ')) + '\n')
+                f.writelines(WUFI_wac_headers_outdoor_van[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_outdoor_van[-1].split(' ')) + '\n')
 
         for t in range(8760):
             txt = '{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}\t{:<.2f}'
             vals = [TA[t], HREL[t], ISDH[t], ISD[t], ILAH[t], RN[t], WD[t], WS[t], PMSL[t]]
+            linetowrite = txt.format(*vals)
+            f.write(linetowrite + '\n')
+    
+    
+    # Export indoor data to WUFI files, Ti = 21 degC
+    x1 = data[year].loc[1:,'Ti_21']
+    x2 = data[year].loc[0,'Ti_21']
+    TA = np.append(x1, x2)
+    x1 = data[year].loc[1:,'RHi_Ti21']
+    x2 = data[year].loc[0,'RHi_Ti21']
+    HREL = np.append(x1, x2) / 100.0
+    PMSL = data[year].loc[:,'Pair'] / 100.0    
+    
+    if not os.path.exists('./output/WUFI/indoor'):
+        os.makedirs('./output/WUFI/indoor')
+    
+    fname = './output/WUFI/indoor/' + year + '_Ti21.wac'
+    
+    with open(fname, mode='w', encoding='ANSI') as f:
+        if 'jok' in year:
+            f.writelines(WUFI_wac_headers_indoor_jok[0] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_jok[1] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_jok[2] + test_year_names[idx_year] + '\n')
+            for idx_line in range(3,len(WUFI_wac_headers_indoor_jok)-1):
+                f.writelines(WUFI_wac_headers_indoor_jok[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_indoor_jok[-1].split(' ')) + '\n')
+            
+        elif 'van' in year:
+            f.writelines(WUFI_wac_headers_indoor_van[0] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_van[1] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_van[2] + test_year_names[idx_year] + '\n')
+            for idx_line in range(3,len(WUFI_wac_headers_indoor_van)-1):
+                f.writelines(WUFI_wac_headers_indoor_van[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_indoor_van[-1].split(' ')) + '\n')
+
+        for t in range(8760):
+            txt = '{:<.2f}\t{:<.2f}\t{:<.2f}'
+            vals = [TA[t], HREL[t], PMSL[t]]
+            linetowrite = txt.format(*vals)
+            f.write(linetowrite + '\n')
+            
+    # Export indoor data to WUFI files, Ti ~ S2
+    x1 = data[year].loc[1:,'Ti_S2']
+    x2 = data[year].loc[0,'Ti_S2']
+    TA = np.append(x1, x2)
+    x1 = data[year].loc[1:,'RHi_TiS2']
+    x2 = data[year].loc[0,'RHi_TiS2']
+    HREL = np.append(x1, x2) / 100.0
+    PMSL = data[year].loc[:,'Pair'] / 100.0    
+    
+    if not os.path.exists('./output/WUFI/indoor'):
+        os.makedirs('./output/WUFI/indoor')
+    
+    fname = './output/WUFI/indoor/' + year + '_TiS2.wac'
+    
+    with open(fname, mode='w', encoding='ANSI') as f:
+        if 'jok' in year:
+            f.writelines(WUFI_wac_headers_indoor_jok[0] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_jok[1] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_jok[2] + test_year_names[idx_year] + '\n')
+            for idx_line in range(3,len(WUFI_wac_headers_indoor_jok)-1):
+                f.writelines(WUFI_wac_headers_indoor_jok[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_indoor_jok[-1].split(' ')) + '\n')
+            
+        elif 'van' in year:
+            f.writelines(WUFI_wac_headers_indoor_van[0] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_van[1] + '\n')
+            f.writelines(WUFI_wac_headers_indoor_van[2] + test_year_names[idx_year] + '\n')
+            for idx_line in range(3,len(WUFI_wac_headers_indoor_van)-1):
+                f.writelines(WUFI_wac_headers_indoor_van[idx_line] + '\n')
+            f.writelines('\t'.join(WUFI_wac_headers_indoor_van[-1].split(' ')) + '\n')
+
+        for t in range(8760):
+            txt = '{:<.2f}\t{:<.2f}\t{:<.2f}'
+            vals = [TA[t], HREL[t], PMSL[t]]
             linetowrite = txt.format(*vals)
             f.write(linetowrite + '\n')
