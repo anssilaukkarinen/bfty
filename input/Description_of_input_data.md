@@ -11,3 +11,9 @@ The input data has the following variables:
 - `Rbeam` is the solar radiation to a plane that is normal to the direction of the sun, average value for the preceding hour, W/m2
 - `precip` is the total amount of rain to a horizontal surface, including both water and snow, average value for the preceding hour, dm3/(m2h)
 
+The files were handled as follows:
+1. The folder `originals` contains the .prn files that were downloaded from the [Finnish Meteorological Institute website](https://www.ilmatieteenlaitos.fi/rakennusfysiikan-ilmastolliset-testivuodet).
+2. The header rows for the prn-files were replaced with the keywords described above and the files were renamed. These files are in the root of `input` folder.
+3. The modified prn-files were read into Excel spreadsheet `bf_test_years_2020-04-20.xlsx` and the following changes were made:
+    1. The building physical test year Jokioinen 2004 is originally a leap year (366 days), but the leap day (Feb 29th) was removed from the files to make all years 8760 hours long
+    2. The original columns for index (t), year, month, day and hour were removed. All the test years have the first row as January 1st 00:00.
