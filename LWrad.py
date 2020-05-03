@@ -46,8 +46,8 @@ def main(data_all, year_names, year_name_titles):
 
 class LWrad():
     """
-    Run calculations and export results for one year
-    The longwave radiation is calculated for 
+    Calculates the hourly atmospheric downward longwave radiation to a horizontal surface
+    according to Mundt-Petersen & Wallentén (2014) and ASHRAE Fundamentals (2017)
     """
     
     
