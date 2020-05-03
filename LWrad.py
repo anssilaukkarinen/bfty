@@ -64,16 +64,25 @@ class LWrad():
         self.year_name_title = year_name_title
         self.sigma_SB = 5.67e-8
         
-        # T and RH are calculated for timestamps, 
-        # that correspond to solar radiation measurements
+        # T and RH in the input data are instantaneous values, but the 
+        # radiation values are average values for the preceding hour.
+        # The radiation values are kept intact, but the T and RH are 
+        # interpolated so that there is a better match of the timestamps.
         Te_on_hour = data.loc[:,'Te'].values
         Te_half_hour = np.zeros(len(Te_on_hour))
         Te_half_hour[0:-1] = Te_on_hour[0:-1] + 0.5*(Te_on_hour[1:] - Te_on_hour[0:-1])
         Te_half_hour[-1] = Te_on_hour[-1]
+        
         RHe_on_hour = data.loc[:,'RHe_water'].values
-        RHe_half_hour = np.zeros(len(RHe_on_hour))
-        RHe_half_hour[0:-1] = RHe_on_hour[0:-1] + 0.5 * (RHe_on_hour[1:] - RHe_on_hour[0:-1])
-        RHe_half_hour[-1] = RHe_on_hour[-1]
+        ve_on_hour = self.calc_v(Te_on_hour, RHe_on_hour)
+        ve_half_hour = np.zeros(len(ve_on_hour))
+        ve_half_hour[0:-1] = ve_on_hour[0:-1] + 0.5*(ve_on_hour[1:]-ve_on_hour[0:-1])
+        ve_half_hour[-1] = ve_on_hour[-1]
+        
+        vesat_half_hour = self.calc_v(Te_half_hour, 100.0)
+        RHe_half_hour = 100.0 * (ve_half_hour/vesat_half_hour)
+        
+        
         self.T_dew = self.calc_T_dew(Te_half_hour, RHe_half_hour)
         self.T_air = Te_half_hour + 273.15
         self.I_glob = data.loc[:,'Rglob'].values
@@ -103,6 +112,19 @@ class LWrad():
         
         self.export_intermediate_results_to_csv()
         self.export_final_results_to_csv()
+    
+    
+    @staticmethod
+    def calc_v(T, RH):
+        """
+        Calculate the water vapour concentration from T and RH, kg/m3
+        RH is given with respect to liquid water
+        CIMO guide measurement of humidity
+        """
+        
+        psat = 611.2 * np.exp((17.62*T) / (243.12+T))
+        v = (RH/100.0) * psat / (461.5*(273.15+T))
+        return(v)
     
     
     def calc_T_dew(self, T, RH):
