@@ -164,8 +164,8 @@ for idx_year, year in enumerate(data.keys()):
     ve = (RHe_water/100.0)*pvsat_water(Te) / (Rw*(273.15+Te))
     
     Ti_21 = 21.0 * np.ones(8760)
-    Te_rolling_mean = Te.rolling(window_width, min_periods = 1, center=True).mean()
-    ve_rolling_mean = ve.rolling(window_width, min_periods = 1, center=True).mean()
+    Te_rolling_mean = Te.rolling(window_width, min_periods = 1).mean()
+    ve_rolling_mean = ve.rolling(window_width, min_periods = 1).mean()
     vi_Ti21 = ve_rolling_mean + dv(Te_rolling_mean)
     vsat_Ti21 = pvsat_water(Ti_21)/(Rw*(273.15+Ti_21))
     RHi_Ti21 = np.minimum(95.0, 100.0 * vi_Ti21 / vsat_Ti21)
