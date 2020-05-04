@@ -285,6 +285,10 @@ for idx_year, year in enumerate(data.keys()):
     
     
     ## Export to csv files
+    # precip, Rdif, Rdir, Rbeam and LWdn are average values for the preceding
+    # hour. If needed, they can be changed to correspond to the following hour.
+    move_cumulative_to_following = False
+    
     if not os.path.exists('./output/csv/'+year):
         os.makedirs('./output/csv/'+year)
     
@@ -292,11 +296,15 @@ for idx_year, year in enumerate(data.keys()):
         
         fname = './output/csv/'+year+'/'+col_name+'.csv'
         
-        if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn']:
-            # Move one hour earlier
-            x1 = data[year].loc[1:,col_name].values
-            x2 = data[year].loc[0,col_name]
-            x = np.append(x1,x2)
+        if move_cumulative_to_following:
+            if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn']:
+                # Move one hour earlier
+                x1 = data[year].loc[1:,col_name].values
+                x2 = data[year].loc[0,col_name]
+                x = np.append(x1,x2)
+            else:
+                x = data[year].loc[:,col_name].values
+        
         else:
             x = data[year].loc[:,col_name].values
         
@@ -347,7 +355,7 @@ for idx_year, year in enumerate(data.keys()):
     
     for idx, col_name in enumerate(col_names):
         
-        fname = './output/Delphin6/'+year+'/'+col_names[idx]+'.ccd'
+        fname = './output/Delphin6/'+year+'/'+col_name+'.ccd'
         with open(fname, 'w') as f:
             
             # Header
@@ -365,7 +373,7 @@ for idx_year, year in enumerate(data.keys()):
             for t in range(8760):
                 hour = t % 24
                 day = int((t-hour)/24)
-                val = data[year].loc[t,col_name]
+                val = x[t]
                 
                 linetowrite = '{:<4d} {:02d}:00:00 {:.2f}'.format(day, hour, val)
                 f.write(linetowrite + '\n')
