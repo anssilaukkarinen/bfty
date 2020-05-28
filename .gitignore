@@ -1,3 +1,30 @@
-# Exclude output folders, trailing slash (/) means folders and everyting in them
-LWrad/
-output/
+# Ignore all files and folders
+*
+
+# ...except these files in the roof folder
+!.gitignore
+!LICENSE.txt
+!LWrad.py
+!README.md
+!climate_files.py
+
+# There are also some files in the input folder,
+# that we want to have updated
+
+# Higher-level folder have to be un-ignored first to access files deeper in them
+!input
+input/*
+
+!input/originals
+
+!/input/bf_test-years_2020-04-20.xlsx
+!/input/Description_of_input_data.md
+
+!/input/jok2004.prn
+!/input/jok2030.prn
+!/input/jok2050.prn
+!/input/jok2100.prn
+!/input/van2007.prn
+!/input/van2030.prn
+!/input/van2050.prn
+!/input/van2100.prn
