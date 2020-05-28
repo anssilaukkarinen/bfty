@@ -23,11 +23,17 @@ def main(data_all, year_names, year_name_titles):
     for year_name in year_names:
         
         if 'jok' in year_name:
+            # jok as in Jokioinen
             latitude = 60.81
             longitude = 23.50
         elif 'van' in year_name:
+            # van as in Vantaa
             latitude = 60.33
             longitude = 24.96
+        elif 'hol' in year_name:
+            # hol as in Holzkirchen
+            latitude = 47.88
+            longitude = 11.70
         else:
             print('Error in location!')
             
@@ -63,6 +69,8 @@ class LWrad():
         self.year_name = year_name
         self.year_name_title = year_name_title
         self.sigma_SB = 5.67e-8
+        
+        self.n_steps = len(self.data.index)
         
         # T and RH in the input data are instantaneous values, but the 
         # radiation values are average values for the preceding hour.
@@ -154,13 +162,14 @@ class LWrad():
         idx = 0 -> 00:30, idx = 1 -> 01:30, etc
         """
         
-        t = np.arange(8760) + 0.5
+        t = np.arange(self.n_steps) + 0.5
         
         # Declination angle
-        self.declination_rad = 23.45 * (np.pi/180) * np.sin(2*np.pi * (t-1944)/8760)
+        self.declination_rad = 23.45 * (np.pi/180) \
+                                * np.sin(2*np.pi * (t-1944)/8760)
         
         # Time of day
-        self.CL = np.tile(np.arange(24)+0.5, 365)
+        self.CL = np.tile(np.arange(24)+0.5, int(self.n_steps/24))
         
         # Equation of time
         self.Gamma = 2*np.pi * (t/8760.0)
@@ -184,16 +193,18 @@ class LWrad():
         self.r = 1 + 0.033 * np.cos(2*np.pi*(t-3*24)/8760)
         
         # Solar radiation to horizontal surface without atmosphere
-        dummy2 = np.cos(self.latitude_rad) * np.cos(self.declination_rad) * np.cos(self.omega_rad) \
+        dummy2 = np.cos(self.latitude_rad) \
+                * np.cos(self.declination_rad) \
+                * np.cos(self.omega_rad) \
                 + np.sin(self.latitude_rad) * np.sin(self.declination_rad)
         self.I_0 = self.r * self.I_sc * dummy2
         
         # Clearness index
-        self.K_t_days = np.zeros((365*2,2))
+        self.K_t_days = np.zeros(( int(self.n_steps/24)*2, 2))
         t_half_morning = 9
         t_half_evening = 3
         
-        for day in range(365):
+        for day in range(int(self.n_steps/24)):
             # Loop through all the days
             
             # Morning
@@ -228,7 +239,8 @@ class LWrad():
             self.K_t_days[day*2+1, 0] = day*24 + 13 + t_half_evening
         
         
-        self.K_t = np.interp(np.arange(8760), self.K_t_days[:,0], self.K_t_days[:,1])
+        self.K_t = np.interp(np.arange(self.n_steps), self.K_t_days[:,0], \
+                             self.K_t_days[:,1])
         
     
     def make_plots(self):
@@ -244,7 +256,7 @@ class LWrad():
         plt.title(self.year_name_title)
         plt.xlabel('Time from the beginning of the year, h')
         plt.ylabel('LWdn, W/m$^2$')
-        plt.axis([0, 8760, 125, 450])
+        plt.axis([0, self.n_steps, 125, 450])
         plt.grid()
         plt.savefig('./LWrad/LWdn_' + self.year_name + '.png', \
                     dpi=200, bbox_inches='tight')
@@ -255,7 +267,7 @@ class LWrad():
         plt.title(self.year_name_title)
         plt.xlabel('Time from the beginning of the year, h')
         plt.ylabel('Effective sky emissivity, -')
-        plt.axis([0, 8760, 0.60, 1.05])
+        plt.axis([0, self.n_steps, 0.60, 1.05])
         plt.grid()
         plt.savefig('./LWrad/Emissivity_' + self.year_name + '.png', \
                     dpi=200, bbox_inches='tight')
@@ -266,7 +278,7 @@ class LWrad():
         plt.title(self.year_name_title)
         plt.xlabel('Time from the beginning of the year, h')
         plt.ylabel('Tsky,eff, K')
-        plt.axis([0, 8760, 220, 300])
+        plt.axis([0, self.n_steps, 220, 300])
         plt.grid()
         plt.savefig('./LWrad/Tskyeff_' + self.year_name + '.png', \
                     dpi=200, bbox_inches='tight')
@@ -277,7 +289,7 @@ class LWrad():
         plt.title(self.year_name_title)
         plt.xlabel('Time from the beginning of the year, h')
         plt.ylabel('dT = Tsky - Tair, $\degree$C')
-        plt.axis([0, 8760, -30, 5])
+        plt.axis([0, self.n_steps, -30, 5])
         plt.grid()
         plt.savefig('./LWrad/dTsky_' + self.year_name + '.png', \
                     dpi=200, bbox_inches='tight')
@@ -316,6 +328,7 @@ class LWrad():
         
 if __name__ == '__main__':
     
+    # Set 1, original values
     year_names = ['jok2004', 'jok2030', 'jok2050', 'jok2100', \
                   'van2007', 'van2030', 'van2050', 'van2100']
     
@@ -328,11 +341,13 @@ if __name__ == '__main__':
                     'van2050':'Vantaa 2050', \
                     'van2100':'Vantaa 2100'}
     
+    fname = './input/bf_test_years_2020-04-20.xlsx'
+    
     
     
     ##
     
-    fname = './input/bf_test_years_2020-04-20.xlsx'
+    
     data_all = pd.read_excel(fname, sheet_name=year_names)
     
     output = main(data_all, year_names, year_name_titles)
