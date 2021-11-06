@@ -1,5 +1,7 @@
 # bfty (Building Physical Test Years)
 
+Note: The code in this repository is related projects that were conducted during 2009-2019. An update project is conducted during 2021-2022, where new building physical test years are selected. This repository is not updated anymore.
+
 ### How to use
 The code was written with Python 3. You can use git clone to create a working copy of the repository, but if you don't have git installed, you can also download the repository as a zip-file, extract it and run the py-files that way. Run first `LWrad.py` and secondly `climate_files.py`.
 
