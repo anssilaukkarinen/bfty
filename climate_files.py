@@ -668,10 +668,15 @@ for idx_year, year in enumerate(data.keys()):
             linetowrite = D5_keywords[idx]
             f.write(linetowrite + '\n')
             
-            # Data rows
-            if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn', varname_WDR]:
-                # The input data files has these as for the preciding hour,
-                # but Delphin uses the values for future time steps.
+            # Data rows            
+            if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn']:
+                # Delphin holds the previous value until the new value at the 
+                # next time step, e.g. hourly data point at 9:00 describes conditions
+                # at 9:00-10:00. However, the input data describes the average
+                # conditions in the previous hour, e.g. data point at 10:00
+                # describes conditions at 9:00-10:00. Because of this, the input
+                # data is moved one hour earlier, so that the definitions would match.
+
                 x1 = data[year].loc[1:,col_name]
                 x2 = data[year].loc[0,col_name]
                 x = np.append(x1,x2)
@@ -714,12 +719,17 @@ for idx_year, year in enumerate(data.keys()):
             f.write(linetowrite + '\n')
             
             # Data rows
-            # if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn']:
-            #     x1 = data[year].loc[1:,col_name]
-            #     x2 = data[year].loc[0,col_name]
-            #     x = np.append(x1,x2)
-            # else:
-            x = data[year].loc[:,col_name]
+            if col_name in ['precip', 'Rdif', 'Rdir', 'Rbeam', 'LWdn']:
+                # Delphin holds the value at a time step until the next time
+                # step, whereas in the input data the value at a time step
+                # describes the conditions in the previous time step
+                # (for radiation and precipitation data). Because of this,
+                # the input data is moved one hour earlier to match definitions.
+                x1 = data[year].loc[1:,col_name]
+                x2 = data[year].loc[0,col_name]
+                x = np.append(x1,x2)
+            else:
+                x = data[year].loc[:,col_name]
                         
             for t in range(8760):
                 hour = t % 24
